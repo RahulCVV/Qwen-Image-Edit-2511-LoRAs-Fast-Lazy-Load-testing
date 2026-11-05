@@ -40,10 +40,11 @@ pipe = QwenImageEditPlusPipeline.from_pretrained(
     transformer=QwenImageTransformer2DModel.from_pretrained(
         "prithivMLmods/Qwen-Image-Edit-Rapid-AIO-V19",
         torch_dtype=dtype,
-        device_map="cuda",
+        device_map="auto",
+        low_cpu_mem_usage=True,
     ),
     torch_dtype=dtype,
-).to(device)
+)
 
 try:
     pipe.transformer.set_attn_processor(QwenDoubleStreamAttnProcessorFA3())

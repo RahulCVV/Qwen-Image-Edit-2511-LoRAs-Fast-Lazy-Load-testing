@@ -1,3 +1,72 @@
+#Extra notes
+
+#Docker options / Env :
+{
+  "Env": [
+    "HF_HOME=/workspace/.hf_cache",
+    "ACCELERATE_USE_CPU=False",
+    "TRANSFORMERS_VERBOSITY=info",
+    "GRADIO_SERVER_NAME=0.0.0.0",
+    "GRADIO_SERVER_PORT=7860",
+    "PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True"
+  ]
+}
+
+
+
+
+#OnStart Script used
+#!/bin/bash
+# 1. Direct console outputs to Vast infrastructure logs
+exec > /var/log/onstart_setup.log 2>&1
+echo "=== Modifying Existing Template for Qwen Project ==="
+
+mkdir workspace
+cd /workspace
+
+# 2. Check and clone repo branch
+if [ ! -d "Qwen-Image-Edit-2511-LoRAs-Fast-Lazy-Load" ]; then
+    echo "Cloning the target repository..."
+    #git clone https://github.com/PRITHIVSAKTHIUR/Qwen-Image-Edit-2511-LoRAs-Fast-Lazy-Load.git
+    git clone https://github.com/RahulCVV/Qwen-Image-Edit-2511-LoRAs-Fast-Lazy-Load-testing.git
+fi
+
+cd Qwen-Image-Edit-2511-LoRAs-Fast-Lazy-Load || exit
+
+if uv run python --version 2>&1 | grep -q "Python 3.14"; then
+    echo "Python 3.14 is already the default version."
+else
+    echo "Python 3.14 is not default. Installing and configuring..."
+    
+    # 2. Install Python 3.14 via uv
+    uv python install 3.14
+    
+    # 3. Pin Python 3.14 as the default for the current project/directory
+    uv python pin 3.14
+    
+    echo "Python 3.14 has been installed and set as the default version."
+fi
+
+
+
+# 3. Handle Python virtual environment synchronization
+#echo "Injecting uv package manager and syncing requirements..."
+#pip install --no-cache-dir uv
+#uv sync --no-install-project
+#
+## 4. Spin up the application daemon in the background
+#echo "Launching daemon entrypoint..."
+#nohup env PYTORCH_CUDA_ALLOC_CONF="expandable_segments:True" \
+          ACCELERATE_USE_CPU=False \
+          uv run --no-project python app.py > ~/workspace/gradio_app.log 2>&1 &
+
+#
+#echo "=== Adjustments complete! System is spinning up. ==="
+#tail -f ~/workspace/gradio_app.log
+
+
+
+
 # **[Qwen-Image-Edit-2511-LoRAs-Fast-Lazy-Load](https://huggingface.co/spaces/prithivMLmods/Qwen-Image-Edit-2511-LoRAs-Fast)**
 
 Qwen-Image-Edit-2511-LoRAs-Fast-Lazy-Load is an experimental, high-performance image editing and style-transfer platform built on top of the `Qwen/Qwen-Image-Edit-2511` base model and an optimized transformer architecture (`prithivMLmods/Qwen-Image-Edit-Rapid-AIO-V19`). The application integrates Flash Attention 3 (`QwenDoubleStreamAttnProcessorFA3`) to achieve low VRAM footprints and accelerated 4-step image manipulation.
