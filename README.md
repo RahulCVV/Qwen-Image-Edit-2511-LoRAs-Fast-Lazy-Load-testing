@@ -1,5 +1,6 @@
 #Extra notes
 
+```text
 #Docker options / Env :
 {
   "Env": [
@@ -11,11 +12,12 @@
     "PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True"
   ]
 }
-
+```
 
 
 
 #OnStart Script used
+```text
 #!/bin/bash
 # 1. Direct console outputs to Vast infrastructure logs
 exec > /var/log/onstart_setup.log 2>&1
@@ -63,7 +65,7 @@ fi
 #
 #echo "=== Adjustments complete! System is spinning up. ==="
 #tail -f ~/workspace/gradio_app.log
-
+```
 
 
 
